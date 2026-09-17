@@ -29,8 +29,19 @@ export function CameraIcon() {
   );
 }
 
+export function CodeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8.5 8L4.5 12l4 4" />
+      <path d="M15.5 8l4 4-4 4" />
+      <path d="M13.5 6.5l-3 11" />
+    </svg>
+  );
+}
+
 export const iconMap = {
   chat: ChatIcon,
   pot: PotIcon,
   camera: CameraIcon,
+  code: CodeIcon,
 };

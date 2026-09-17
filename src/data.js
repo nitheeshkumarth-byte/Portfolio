@@ -74,6 +74,19 @@ export const projects = [
   },
 ];
 
+// Approval gate for auto-fetched projects.
+// Nothing from GitHub shows on the site just because a repo exists —
+// a repo only appears once its name is added to this list, committed, and pushed.
+// Metadata (description, language, topics) is then pulled live from the GitHub API,
+// so you don't have to retype it here.
+//
+// Repos already covered above in `projects` (by matching name) are skipped automatically
+// to avoid duplicate slides.
+export const githubUsername = 'nitheeshkumarth-byte';
+export const approvedRepos = [
+  // 'some-new-repo-name',
+];
+
 export const skillGroups = [
   { title: 'languages', skills: ['Python', 'PHP', 'JavaScript', 'SQL'] },
   { title: 'frameworks & data', skills: ['Django', 'Flask', 'MySQL', 'MongoDB'] },

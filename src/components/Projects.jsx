@@ -1,15 +1,79 @@
 import { useEffect, useRef, useState } from 'react';
-import { projects } from '../data.js';
+import { projects as manualProjects, approvedRepos, githubUsername } from '../data.js';
 import { iconMap } from './icons/ProjectIcons.jsx';
 import { ChevronLeft, ChevronRight } from './icons/ChevronIcons.jsx';
 
+// Repo names already covered by hand-curated entries in `projects` (matched via their links),
+// so an approved repo isn't shown twice.
+function alreadyCovered(repoName) {
+  return manualProjects.some((p) =>
+    p.links.some((l) => l.url.toLowerCase().includes(`/${repoName.toLowerCase()}`))
+  );
+}
+
+function formatRepoName(name) {
+  return name
+    .replace(/[-_]/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function useApprovedGithubProjects() {
+  const [fetched, setFetched] = useState([]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      const toFetch = approvedRepos.filter((r) => !alreadyCovered(r));
+      const results = await Promise.all(
+        toFetch.map(async (repoName) => {
+          try {
+            const res = await fetch(`https://api.github.com/repos/${githubUsername}/${repoName}`);
+            if (!res.ok) return null;
+            const repo = await res.json();
+            const stack = repo.topics && repo.topics.length > 0
+              ? repo.topics.slice(0, 6)
+              : [repo.language].filter(Boolean);
+            return {
+              id: `gh-${repo.name}`,
+              name: formatRepoName(repo.name),
+              desc: repo.description || 'No description provided in the GitHub repo yet.',
+              stack,
+              links: [{ label: 'repo', url: repo.html_url }],
+              icon: 'code',
+              auto: true,
+            };
+          } catch {
+            return null;
+          }
+        })
+      );
+      if (!cancelled) setFetched(results.filter(Boolean));
+    }
+
+    if (approvedRepos.length > 0) load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return fetched;
+}
+
 function Projects() {
+  const autoProjects = useApprovedGithubProjects();
+  const allProjects = [...manualProjects, ...autoProjects];
+
   const [index, setIndex] = useState(0);
   const trackRef = useRef(null);
   const touchStartX = useRef(null);
-  const total = projects.length;
+  const total = allProjects.length;
 
   const goTo = (i) => setIndex((i + total) % total);
+
+  useEffect(() => {
+    if (index >= total) setIndex(0);
+  }, [total, index]);
 
   useEffect(() => {
     function handleKey(e) {
@@ -23,7 +87,7 @@ function Projects() {
     document.addEventListener('keydown', handleKey);
     return () => document.removeEventListener('keydown', handleKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index]);
+  }, [index, total]);
 
   function onTouchStart(e) {
     touchStartX.current = e.touches[0].clientX;
@@ -53,7 +117,7 @@ function Projects() {
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
           >
-            {projects.map((p) => {
+            {allProjects.map((p) => {
               const Icon = iconMap[p.icon];
               return (
                 <div className="project" key={p.id}>
@@ -62,7 +126,10 @@ function Projects() {
                   </div>
                   <div>
                     <div className="project-head">
-                      <span className="project-name">{p.name}</span>
+                      <span className="project-name">
+                        {p.name}
+                        {p.auto && <span className="auto-badge">auto</span>}
+                      </span>
                       <div className="project-links">
                         {p.links.length === 0 ? (
                           <span className="project-link disabled">repo not public</span>
@@ -101,7 +168,7 @@ function Projects() {
             <ChevronLeft />
           </button>
           <div className="carousel-dots">
-            {projects.map((p, i) => (
+            {allProjects.map((p, i) => (
               <button
                 key={p.id}
                 className={`carousel-dot${i === index ? ' active' : ''}`}
