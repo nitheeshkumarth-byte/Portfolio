@@ -84,11 +84,16 @@ export const projects = [
     icon: 'pot',
   },
   {
-    id: 'object-detection',
+    id: 'Object-Detection',
     name: 'Object Detection Pipeline',
     desc: 'A real-time object detection system built on the YOLOv3 architecture, covering model training, inference, and evaluation on custom image data.',
     stack: ['YOLOv3', 'TensorFlow', 'Keras', 'OpenCV'],
+<<<<<<< HEAD
     links: [{ label: 'repo', url: 'https://github.com/nitheeshkumarth-byte/Object-Detection' }],
+=======
+    links: [
+      { label: 'app repo', url: 'https://github.com/nitheeshkumarth-byte/Object-Detection.git' } ],
+>>>>>>> fd24d864bc21e9939b8c5118d326a5ae9c1f0532
     icon: 'camera',
   },
 ];
