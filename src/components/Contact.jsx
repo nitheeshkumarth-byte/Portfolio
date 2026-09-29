@@ -1,11 +1,13 @@
-import { profile } from '../data.js';
+import { profile, sectionMeta } from '../data.js';
+
+const meta = sectionMeta('contact');
 
 function Contact() {
   return (
     <section id="contact">
       <div className="sec-head">
-        <span className="sec-num">06</span>
-        <h2 className="sec-title">contact</h2>
+        <span className="sec-num">{meta.num}</span>
+        <h2 className="sec-title">{meta.title}</h2>
       </div>
       <div className="contact-wrap">
         <div className="contact-lead">Open to entry-level SWE &amp; GenAI roles.</div>
@@ -19,11 +21,11 @@ function Contact() {
           </a>
           <a className="contact-card" href={profile.github} target="_blank" rel="noopener noreferrer">
             <span className="contact-card-label">github</span>
-            <span className="contact-card-val">nitheeshkumarth-byte</span>
+            <span className="contact-card-val">{profile.githubHandle}</span>
           </a>
           <a className="contact-card" href={profile.linkedin} target="_blank" rel="noopener noreferrer">
             <span className="contact-card-label">linkedin</span>
-            <span className="contact-card-val">nitheesh-kumar-thadikamalla</span>
+            <span className="contact-card-val">{profile.linkedinHandle}</span>
           </a>
         </div>
       </div>

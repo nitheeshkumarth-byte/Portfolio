@@ -14,7 +14,7 @@ function Hero() {
           <div className="term-line">
             <span className="prompt">$</span> whoami
           </div>
-          <div className="term-out">{profile.name}</div>
+          <h1 className="term-out">{profile.name}</h1>
           <div className="term-role">
             {profile.role}
             <span className="cursor" />

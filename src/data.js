@@ -6,8 +6,27 @@ export const profile = {
   tags: ['RAG & LLMs', 'Computer Vision', 'AWS Bedrock', 'Full-Stack'],
   email: 'nitheeshkumar.th@gmail.com',
   github: 'https://github.com/nitheeshkumarth-byte',
+  githubHandle: 'nitheeshkumarth-byte',
   linkedin: 'https://www.linkedin.com/in/nitheesh-kumar-thadikamalla-a397b2235/',
+  linkedinHandle: 'nitheesh-kumar-thadikamalla',
 };
+
+// Single source of truth for section ids, nav labels, and nav/heading numbers.
+// Order here drives both the nav order and the "01".."06" section numbers.
+export const sections = [
+  { id: 'about', label: 'about', title: 'about' },
+  { id: 'experience', label: 'experience', title: 'experience' },
+  { id: 'projects', label: 'projects', title: 'projects' },
+  { id: 'skills', label: 'skills', title: 'skills' },
+  { id: 'certifications', label: 'certs', title: 'certifications' },
+  { id: 'contact', label: 'contact', title: 'contact' },
+];
+
+export function sectionMeta(id) {
+  const i = sections.findIndex((s) => s.id === id);
+  if (i === -1) return { id, label: id, title: id, num: '' };
+  return { ...sections[i], num: String(i + 1).padStart(2, '0') };
+}
 
 export const about = {
   paragraphs: [
@@ -31,7 +50,7 @@ export const experience = [
     desc: 'Working on applied AI/LLM systems, including retrieval-augmented generation infrastructure.',
   },
   {
-    period: 'May 2025 — Nov 2026',
+    period: 'May 2025 — Nov 2025',
     role: 'Java Full Stack Developer Training',
     org: 'J-Spiders, Hyderabad',
     desc: 'Structured training program covering full-stack Java development.',
@@ -69,23 +88,17 @@ export const projects = [
     name: 'Object Detection Pipeline',
     desc: 'A real-time object detection system built on the YOLOv3 architecture, covering model training, inference, and evaluation on custom image data.',
     stack: ['YOLOv3', 'TensorFlow', 'Keras', 'OpenCV'],
-    links: [],
+    links: [{ label: 'repo', url: 'https://github.com/nitheeshkumarth-byte/Object-Detection' }],
     icon: 'camera',
   },
 ];
 
-// Approval gate for auto-fetched projects.
-// Nothing from GitHub shows on the site just because a repo exists —
-// a repo only appears once its name is added to this list, committed, and pushed.
-// Metadata (description, language, topics) is then pulled live from the GitHub API,
-// so you don't have to retype it here.
-//
-// Repos already covered above in `projects` (by matching name) are skipped automatically
-// to avoid duplicate slides.
+// GitHub repos are auto-fetched at build time by the `github-repos` plugin in
+// vite.config.js: every non-fork, non-archived repo of this account that has a
+// description set becomes a project slide (portfolio repos and the hand-curated
+// entries above are excluded). Add a description on GitHub → it shows up on the
+// next build. No list to maintain here.
 export const githubUsername = 'nitheeshkumarth-byte';
-export const approvedRepos = [
-  // 'some-new-repo-name',
-];
 
 export const skillGroups = [
   { title: 'languages', skills: ['Python', 'PHP', 'JavaScript', 'SQL'] },

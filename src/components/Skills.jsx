@@ -1,11 +1,13 @@
-import { skillGroups } from '../data.js';
+import { skillGroups, sectionMeta } from '../data.js';
+
+const meta = sectionMeta('skills');
 
 function Skills() {
   return (
     <section id="skills">
       <div className="sec-head">
-        <span className="sec-num">04</span>
-        <h2 className="sec-title">skills</h2>
+        <span className="sec-num">{meta.num}</span>
+        <h2 className="sec-title">{meta.title}</h2>
       </div>
       <div className="skills-grid">
         {skillGroups.map((g) => (

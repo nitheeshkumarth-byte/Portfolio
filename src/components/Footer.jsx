@@ -1,7 +1,7 @@
 function Footer() {
   return (
     <footer>
-      <span>© 2026 Nitheesh Kumar Thadikamalla</span>
+      <span>© {new Date().getFullYear()} Nitheesh Kumar Thadikamalla</span>
       <span>Hyderabad, India</span>
     </footer>
   );

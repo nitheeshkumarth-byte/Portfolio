@@ -13,8 +13,11 @@ function App() {
   return (
     <>
       <Backdrop />
+      <a className="skip-link" href="#main">
+        skip to content
+      </a>
       <Nav />
-      <div className="wrap">
+      <main className="wrap" id="main" tabIndex={-1}>
         <Hero />
         <About />
         <Experience />
@@ -22,6 +25,8 @@ function App() {
         <Skills />
         <Certifications />
         <Contact />
+      </main>
+      <div className="wrap">
         <Footer />
       </div>
     </>

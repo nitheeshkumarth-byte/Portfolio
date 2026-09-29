@@ -1,11 +1,13 @@
-import { about } from '../data.js';
+import { about, sectionMeta } from '../data.js';
+
+const meta = sectionMeta('about');
 
 function About() {
   return (
     <section id="about">
       <div className="sec-head">
-        <span className="sec-num">01</span>
-        <h2 className="sec-title">about</h2>
+        <span className="sec-num">{meta.num}</span>
+        <h2 className="sec-title">{meta.title}</h2>
       </div>
       <div className="about-grid">
         <div className="about-text">

@@ -41,22 +41,32 @@ This repo ships with a workflow that builds and deploys via the Vercel CLI from 
 3. In your GitHub repo: **Settings → Secrets and variables → Actions**, add `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`.
 4. Push to `main` — Actions builds and deploys to production. Pull requests get a preview deployment commented on the PR.
 
+## New projects appear automatically
+
+The GitHub repo list is fetched **at build time** by the `github-repos` plugin in `vite.config.js` — there is no list to maintain. A repo becomes a project slide (tagged "auto") when:
+
+- it belongs to `githubUsername` in `src/data.js`,
+- it is not a fork and not archived,
+- it has a description set on GitHub,
+- it isn't the portfolio repo itself and isn't already covered by a hand-curated entry.
+
+So: create a repo, add a description on GitHub, push → it appears on the next build/deploy. Name, description, topics (shown as stack pills), repo link, and — if the repo's homepage field is set — a "live demo" link are all pulled from the GitHub API. Dev servers fetch once at startup, so restart `npm run dev` to pick up new repos locally.
+
+If you want full control over wording instead, add a hand-curated entry to the `projects` array (like the existing three); it will be excluded from the auto list automatically.
+
+CI note: the workflow passes `GITHUB_TOKEN` to the build so API calls are rate-limited at 5,000/h instead of 60/h. Locally an unauthenticated fetch is fine. If the API is unreachable the build still succeeds — it just ships without auto-fetched projects.
+
 ## Editing content
 
-All text content (name, projects, skills, certifications, links) lives in one place: `src/data.js`. Edit that file to update the site — no need to touch any component.
-
-## Adding a new project automatically
-
-Rather than fully auto-pulling every repo (which you can't curate), new projects use an **approval gate**:
-
-1. Open `src/data.js` and add the repo's name (just the name, e.g. `'my-new-repo'`) to the `approvedRepos` array.
-2. Commit and push.
-
-That's the entire approval step — nothing from GitHub shows up until a repo's name is explicitly added there. Once approved, the site fetches that repo's description, language, and topics live from the public GitHub API at page load and renders it as a slide (tagged "auto" so it's visually distinct from your hand-written case studies). If you want full control over wording instead, just add a hand-curated entry to the `projects` array like the existing three.
+All text content (name, projects, skills, certifications, links, section order/labels) lives in one place: `src/data.js`. Edit that file to update the site — no need to touch any component.
 
 ## Project structure
 
 ```
+vite.config.js         # build-time GitHub repo fetch (virtual:github-repos)
+index.html             # meta, favicon, JSON-LD, theme preload
+public/
+  favicon.svg
 src/
   data.js            # all portfolio content
   index.css          # global styles & design tokens
@@ -74,5 +84,6 @@ src/
     Backdrop.jsx        # decorative background
     icons/
       ProjectIcons.jsx
+      iconMap.js
       ChevronIcons.jsx
 ```

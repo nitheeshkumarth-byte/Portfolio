@@ -38,10 +38,3 @@ export function CodeIcon() {
     </svg>
   );
 }
-
-export const iconMap = {
-  chat: ChatIcon,
-  pot: PotIcon,
-  camera: CameraIcon,
-  code: CodeIcon,
-};

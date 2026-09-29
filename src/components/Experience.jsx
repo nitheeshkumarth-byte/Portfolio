@@ -1,11 +1,13 @@
-import { experience } from '../data.js';
+import { experience, sectionMeta } from '../data.js';
+
+const meta = sectionMeta('experience');
 
 function Experience() {
   return (
     <section id="experience">
       <div className="sec-head">
-        <span className="sec-num">02</span>
-        <h2 className="sec-title">experience</h2>
+        <span className="sec-num">{meta.num}</span>
+        <h2 className="sec-title">{meta.title}</h2>
       </div>
       {experience.map((e) => (
         <div className="exp-item" key={e.role}>

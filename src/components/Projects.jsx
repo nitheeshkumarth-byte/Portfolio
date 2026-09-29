@@ -1,93 +1,31 @@
-import { useEffect, useRef, useState } from 'react';
-import { projects as manualProjects, approvedRepos, githubUsername } from '../data.js';
-import { iconMap } from './icons/ProjectIcons.jsx';
+import { useRef, useState } from 'react';
+import autoProjects from 'virtual:github-repos';
+import { projects as manualProjects, sectionMeta } from '../data.js';
+import { iconMap } from './icons/iconMap.js';
 import { ChevronLeft, ChevronRight } from './icons/ChevronIcons.jsx';
 
-// Repo names already covered by hand-curated entries in `projects` (matched via their links),
-// so an approved repo isn't shown twice.
-function alreadyCovered(repoName) {
-  return manualProjects.some((p) =>
-    p.links.some((l) => l.url.toLowerCase().includes(`/${repoName.toLowerCase()}`))
-  );
-}
-
-function formatRepoName(name) {
-  return name
-    .replace(/[-_]/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-function useApprovedGithubProjects() {
-  const [fetched, setFetched] = useState([]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      const toFetch = approvedRepos.filter((r) => !alreadyCovered(r));
-      const results = await Promise.all(
-        toFetch.map(async (repoName) => {
-          try {
-            const res = await fetch(`https://api.github.com/repos/${githubUsername}/${repoName}`);
-            if (!res.ok) return null;
-            const repo = await res.json();
-            const stack = repo.topics && repo.topics.length > 0
-              ? repo.topics.slice(0, 6)
-              : [repo.language].filter(Boolean);
-            return {
-              id: `gh-${repo.name}`,
-              name: formatRepoName(repo.name),
-              desc: repo.description || 'No description provided in the GitHub repo yet.',
-              stack,
-              links: [{ label: 'repo', url: repo.html_url }],
-              icon: 'code',
-              auto: true,
-            };
-          } catch {
-            return null;
-          }
-        })
-      );
-      if (!cancelled) setFetched(results.filter(Boolean));
-    }
-
-    if (approvedRepos.length > 0) load();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return fetched;
-}
+const allProjects = [...manualProjects, ...autoProjects];
+const meta = sectionMeta('projects');
 
 function Projects() {
-  const autoProjects = useApprovedGithubProjects();
-  const allProjects = [...manualProjects, ...autoProjects];
-
   const [index, setIndex] = useState(0);
-  const trackRef = useRef(null);
   const touchStartX = useRef(null);
   const total = allProjects.length;
+  const current = allProjects[index];
 
   const goTo = (i) => setIndex((i + total) % total);
 
-  useEffect(() => {
-    if (index >= total) setIndex(0);
-  }, [total, index]);
-
-  useEffect(() => {
-    function handleKey(e) {
-      const el = trackRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      if (rect.top > window.innerHeight || rect.bottom < 0) return;
-      if (e.key === 'ArrowLeft') goTo(index - 1);
-      if (e.key === 'ArrowRight') goTo(index + 1);
+  // Keydown bubbles from the focused control inside the region, so arrow keys
+  // only drive the carousel when it has focus — page scrolling stays intact.
+  function handleKey(e) {
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      goTo(index - 1);
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      goTo(index + 1);
     }
-    document.addEventListener('keydown', handleKey);
-    return () => document.removeEventListener('keydown', handleKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index, total]);
+  }
 
   function onTouchStart(e) {
     touchStartX.current = e.touches[0].clientX;
@@ -96,7 +34,11 @@ function Projects() {
     if (touchStartX.current === null) return;
     const diff = e.changedTouches[0].clientX - touchStartX.current;
     if (Math.abs(diff) > 40) {
-      diff > 0 ? goTo(index - 1) : goTo(index + 1);
+      if (diff > 0) {
+        goTo(index - 1);
+      } else {
+        goTo(index + 1);
+      }
     }
     touchStartX.current = null;
   }
@@ -104,23 +46,38 @@ function Projects() {
   return (
     <section id="projects">
       <div className="sec-head">
-        <span className="sec-num">03</span>
-        <h2 className="sec-title">projects</h2>
+        <span className="sec-num">{meta.num}</span>
+        <h2 className="sec-title">{meta.title}</h2>
       </div>
 
-      <div className="carousel">
+      <div
+        className="carousel"
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="projects"
+        onKeyDown={handleKey}
+      >
+        <p className="sr-only" role="status">
+          Project {index + 1} of {total}: {current?.name}
+        </p>
         <div className="carousel-track-wrap">
           <div
             className="carousel-track"
-            ref={trackRef}
             style={{ transform: `translateX(-${index * 100}%)` }}
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
           >
-            {allProjects.map((p) => {
-              const Icon = iconMap[p.icon];
+            {allProjects.map((p, i) => {
+              const Icon = iconMap[p.icon] ?? iconMap.code;
               return (
-                <div className="project" key={p.id}>
+                <div
+                  className="project"
+                  key={p.id}
+                  role="group"
+                  aria-roledescription="slide"
+                  aria-label={`${i + 1} of ${total}`}
+                  inert={i !== index}
+                >
                   <div className="project-icon">
                     <Icon />
                   </div>
@@ -173,6 +130,7 @@ function Projects() {
                 key={p.id}
                 className={`carousel-dot${i === index ? ' active' : ''}`}
                 aria-label={`Go to project ${i + 1}`}
+                aria-current={i === index ? 'true' : undefined}
                 onClick={() => goTo(i)}
               />
             ))}
