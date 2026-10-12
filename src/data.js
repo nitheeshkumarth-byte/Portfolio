@@ -2,8 +2,8 @@ export const profile = {
   name: 'Nitheesh Kumar\nThadikamalla',
   role: 'AI Engineer Intern @ Quiddity Software Solutions',
   tagline:
-    "B.Tech CS grad building retrieval-augmented systems, computer vision pipelines, and full-stack apps — currently shipping RAG infrastructure on AWS and looking for entry-level SWE / GenAI roles.",
-  tags: ['RAG & LLMs', 'Computer Vision', 'AWS Bedrock', 'Full-Stack'],
+    "B.Tech CS grad building retrieval-augmented systems, agentic LLM workflows, computer vision pipelines, and full-stack apps — currently shipping RAG infrastructure on AWS and looking for entry-level SWE / GenAI roles.",
+  tags: ['RAG & LLMs', 'LLM Agents', 'Computer Vision', 'AWS Bedrock', 'Full-Stack'],
   email: 'nitheeshkumar.th@gmail.com',
   github: 'https://github.com/nitheeshkumarth-byte',
   githubHandle: 'nitheeshkumarth-byte',
@@ -31,7 +31,7 @@ export function sectionMeta(id) {
 export const about = {
   paragraphs: [
     "I'm a 2024 Computer Science graduate from SRM University AP, based in Hyderabad. My work sits at the intersection of applied ML and full-stack engineering — I like taking a model or a retrieval pipeline and wiring it into something people can actually use.",
-    "Right now I'm at Quiddity Software Solutions as an AI Engineer Intern, and I recently completed Java Full Stack training at J-Spiders. Recent work spans AWS Bedrock RAG systems, YOLO-based object detection, and Flask apps powered by generative AI.",
+    "Right now I'm at Quiddity Software Solutions as an AI Engineer Intern, and I recently completed Java Full Stack training at J-Spiders. Recent work spans AWS Bedrock RAG systems, a LangGraph job-hunting agent built on MCP tool servers, YOLO-based object detection, and Flask apps powered by generative AI.",
   ],
   facts: [
     { label: 'based in', value: 'Hyderabad, Telangana, IN' },
@@ -76,6 +76,14 @@ export const projects = [
     icon: 'chat',
   },
   {
+    id: 'jobscope',
+    name: 'JobScope',
+    desc: 'A locally-run job-hunting assistant. A LangGraph agent searches nine job boards in parallel and falls back, via a deterministic graph edge, to cached Gmail job alerts when boards are bot-blocked. It also tailors ATS-friendly LaTeX resumes from your own CV using BM25 retrieval. Tools run as MCP servers, results stream to a FastAPI dashboard, and inference uses a local Ollama model.',
+    stack: ['LangGraph', 'MCP', 'FastAPI', 'Ollama', 'SQLite', 'BM25', 'Scrapling', 'Gmail API'],
+    links: [{ label: 'repo', url: 'https://github.com/nitheeshkumarth-byte/JobScope.git' }],
+    icon: 'search',
+  },
+  {
     id: 'recipe-box',
     name: 'Recipe Box',
     desc: 'An AI-powered recipe manager that uses the Google Gemini API to generate and organize recipes, with a Flask backend and a persistent SQLite store.',
@@ -102,14 +110,25 @@ export const githubUsername = 'nitheeshkumarth-byte';
 
 export const skillGroups = [
   { title: 'languages', skills: ['Python', 'PHP', 'JavaScript', 'SQL'] },
-  { title: 'frameworks & data', skills: ['Django', 'Flask', 'MySQL', 'MongoDB'] },
+  { title: 'frameworks & data', skills: ['Django', 'Flask', 'FastAPI', 'MySQL', 'MongoDB', 'SQLite'] },
   {
     title: 'ai / ml',
-    skills: ['LlamaIndex', 'RAG', 'Prompt Engineering', 'TensorFlow', 'Keras', 'OpenCV', 'YOLOv3'],
+    skills: [
+      'LlamaIndex',
+      'LangGraph',
+      'MCP',
+      'RAG',
+      'Ollama',
+      'Prompt Engineering',
+      'TensorFlow',
+      'Keras',
+      'OpenCV',
+      'YOLOv3',
+    ],
   },
   {
     title: 'cloud & tooling',
-    skills: ['AWS Bedrock', 'S3', 'OpenSearch', 'IAM', 'ECR', 'App Runner', 'Docker', 'Git'],
+    skills: ['AWS Bedrock', 'S3', 'OpenSearch', 'IAM', 'ECR', 'App Runner', 'Docker', 'Git', 'Pytest'],
   },
 ];
 
