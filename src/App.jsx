@@ -17,8 +17,9 @@ function App() {
         skip to content
       </a>
       <Nav />
+      {/* full-bleed, so it lives outside the 920px content column */}
+      <Hero />
       <main className="wrap" id="main" tabIndex={-1}>
-        <Hero />
         <About />
         <Experience />
         <Projects />

@@ -3,6 +3,8 @@ export const profile = {
   role: 'AI Engineer Intern @ Quiddity Software Solutions',
   tagline:
     "B.Tech CS grad building retrieval-augmented systems, agentic LLM workflows, computer vision pipelines, and full-stack apps — currently shipping RAG infrastructure on AWS and looking for entry-level SWE / GenAI roles.",
+  heroLine:
+    'I build RAG systems, LLM agents and computer-vision pipelines, then wire them into apps people can actually use.',
   tags: ['RAG & LLMs', 'LLM Agents', 'Computer Vision', 'AWS Bedrock', 'Full-Stack'],
   email: 'nitheeshkumar.th@gmail.com',
   github: 'https://github.com/nitheeshkumarth-byte',

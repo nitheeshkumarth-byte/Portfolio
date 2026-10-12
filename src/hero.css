@@ -1,0 +1,183 @@
+/* Layered paper-parallax hero. Colours are fixed (paper palette) so the hero
+   looks the same in light and dark theme; only the torn bottom edge follows --bg. */
+.px-hero {
+  --px-paper: #efe7d6;
+  --px-paper-light: #fffbf1;
+  --px-ink: #1b1a17;
+  --px-amber: #e9a23b;
+  --px-teal: #3cb5ab;
+  --px-teal-deep: #0d6b64;
+  --px-shadow: 60, 40, 10;
+  --px-nav-h: 60px;
+  --px-h: max(620px, calc(100svh - var(--px-nav-h))); /* hero height; sizes below are relative to it */
+
+  position: relative;
+  height: var(--px-h);
+  overflow: hidden; /* layers never escape the hero box */
+  isolation: isolate;
+  color: var(--px-ink);
+}
+.px-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+.px-bg { z-index: 1; bottom: -18%; } /* extra height so it never reveals a gap while moving */
+.px-head { z-index: 2; }
+.px-photo { z-index: 3; }
+.px-sub { z-index: 4; }
+.px-cta { z-index: 5; }
+
+/* 1 · background: warm paper with grain and three loose sheets */
+.px-bg {
+  background-color: var(--px-paper);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35  0 0 0 0 .27  0 0 0 0 .12  0 0 0 .22 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.px-sheet {
+  position: absolute;
+  box-shadow:
+    0 1px 0 rgba(var(--px-shadow), 0.1),
+    0 18px 32px -14px rgba(var(--px-shadow), 0.45),
+    0 3px 8px rgba(var(--px-shadow), 0.14);
+}
+.px-sheet-a { left: -8vw; top: 7vh; width: 62vw; height: 56vh; background: var(--px-amber); transform: rotate(-5deg); }
+.px-sheet-b { right: -10vw; top: 24vh; width: 54vw; height: 60vh; background: var(--px-teal); transform: rotate(4deg); }
+.px-sheet-c { left: 24vw; bottom: 8vh; width: 54vw; height: 42vh; background: var(--px-paper-light); transform: rotate(-2deg); }
+
+/* 2 · headline */
+.px-head h1 {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: clamp(64px, 12%, 130px);
+  text-align: center;
+  text-transform: uppercase;
+  font-family: var(--font-sans);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  line-height: 0.82;
+  font-size: min(17vw, calc(var(--px-h) * 0.3));
+}
+.px-head h1 > span { display: block; }
+@media (min-width: 900px) {
+  /* wide screens: one line, so the head only clips the bottom of the letters */
+  .px-head h1 { font-size: min(10.2vw, calc(var(--px-h) * 0.222)); white-space: nowrap; }
+  .px-head h1 > span { display: inline; }
+  .px-head h1 > span:first-child { margin-right: 0.22em; }
+}
+
+/* 3 · cut-out photo, floating above everything behind it */
+.px-photo-wrap {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--px-h) * -0.03);
+  height: min(calc(var(--px-h) * 0.86), 105vw);
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 34px 36px rgba(var(--px-shadow), 0.38)) drop-shadow(0 6px 10px rgba(var(--px-shadow), 0.28));
+}
+.px-photo-wrap img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* feather the cropped shoulder/bottom edges so the cut-out has no hard rectangle */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, #000 10%, #000 90%, transparent),
+    linear-gradient(to bottom, #000 82%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent, #000 10%, #000 90%, transparent),
+    linear-gradient(to bottom, #000 82%, transparent);
+  mask-composite: intersect;
+}
+
+/* 4 · subline on a small paper card */
+.px-card {
+  position: absolute;
+  left: clamp(20px, 6vw, 90px);
+  bottom: clamp(110px, 18vh, 200px);
+  width: min(330px, calc(100vw - 40px));
+  padding: 18px 20px 20px;
+  background: var(--px-paper-light);
+  border-radius: 2px;
+  transform: rotate(-2.2deg);
+  box-shadow:
+    0 1px 0 rgba(var(--px-shadow), 0.06),
+    0 16px 28px -10px rgba(var(--px-shadow), 0.5),
+    0 2px 6px rgba(var(--px-shadow), 0.18);
+}
+.px-eyebrow {
+  font: 600 0.72rem/1.35 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--px-teal-deep);
+  margin-bottom: 10px;
+}
+.px-card p { font-size: 1rem; line-height: 1.5; color: var(--px-ink); }
+
+/* 5 · call to action, the fastest layer */
+.px-btn {
+  position: absolute;
+  right: clamp(20px, 7vw, 110px);
+  bottom: clamp(60px, 12vh, 140px);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7em;
+  padding: 16px 26px;
+  border-radius: 999px;
+  background: var(--px-ink);
+  color: #fff6e4;
+  font-weight: 700;
+  font-size: 1rem;
+  pointer-events: auto;
+  box-shadow: 0 14px 24px -8px rgba(var(--px-shadow), 0.6), 0 2px 5px rgba(var(--px-shadow), 0.3);
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+.px-btn span { color: var(--px-amber); transition: transform 0.18s ease; }
+.px-btn:hover { transform: translateY(-3px); background: #000; }
+.px-btn:hover span { transform: translateY(3px); }
+.px-btn:focus-visible { outline: 3px solid var(--px-amber); outline-offset: 3px; }
+
+/* torn bottom edge in the page colour, so the next section slides over like a new sheet */
+.px-tear {
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 30px;
+  background: var(--bg);
+  clip-path: polygon(0 18px, 5% 6px, 11% 20px, 18% 4px, 27% 16px, 36% 2px, 45% 18px, 54% 5px, 63% 19px, 72% 3px, 81% 17px, 90% 6px, 100% 15px, 100% 100%, 0 100%);
+}
+
+@media (max-width: 640px) {
+  .px-hero { --px-nav-h: 56px; }
+  .px-photo-wrap { height: min(calc(var(--px-h) * 0.62), 112vw); bottom: calc(var(--px-h) * 0.12); }
+  .px-head h1 { top: clamp(60px, 8%, 90px); font-size: min(19vw, calc(var(--px-h) * 0.26)); }
+  .px-card { left: 20px; right: 20px; width: auto; bottom: clamp(84px, 12vh, 120px); }
+  .px-btn { left: 0; right: 0; margin-inline: auto; width: fit-content; bottom: clamp(20px, 4vh, 40px); }
+  .px-sheet-a { width: 90vw; height: 40vh; }
+  .px-sheet-b { width: 80vw; height: 44vh; top: 30vh; }
+  .px-sheet-c { left: 8vw; width: 84vw; }
+}
+
+/* reduced motion: no parallax, clean static stack */
+@media (prefers-reduced-motion: reduce) {
+  .px-hero {
+    height: auto;
+    min-height: var(--px-h);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    padding: clamp(48px, 9vh, 96px) 20px 12vh;
+  }
+  .px-layer { position: relative; inset: auto; bottom: auto; transform: none !important; will-change: auto; }
+  .px-bg { position: absolute; inset: 0; }
+  .px-head h1 { position: static; font-size: clamp(3rem, 16vw, 9rem); }
+  .px-photo-wrap { position: relative; left: auto; bottom: auto; transform: none; height: min(60vh, 90vw); margin-inline: auto; }
+  .px-card { position: relative; left: auto; bottom: auto; transform: none; }
+  .px-btn { position: relative; right: auto; bottom: auto; margin-inline: auto; }
+}
